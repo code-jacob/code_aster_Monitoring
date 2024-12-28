@@ -1,0 +1,12 @@
+directory: C:\Users\trusinja\Desktop\ASTER_WORK\AG_WORK
+file_name: fort.6
+file_number: 0
+application: C:\Users\trusinja\AppData\Local\Programs\Microsoft VS Code\Code.exe
+message_file: C:\Users\trusinja\Desktop\ASTER_WORK\AG_WORK\BALL_VALVES\K92.24_DN450_PN100_A49697\STUDY\Axisymmetric_GMNA\RESULTS\Stage_0_Axisymmetric_GMNA.mess
+probe_position: -1
+update_after: 30
+open_file: 0
+file_auto: 1
+print_files: 0
+mode: 1
+Unit: [-]
