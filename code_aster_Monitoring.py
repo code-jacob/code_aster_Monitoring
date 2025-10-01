@@ -3,20 +3,25 @@ Created on Sun Jan  7 14:43:53 2024
 Author: Jakub Trušina
 Name: code_aster_Monitoring.py
 """
+import os
+import subprocess
+import numpy as np
+import matplotlib.pyplot as plt
+import pandas as pd
+import re
+import shutil
 
 # =============================================================================
 # Ploting Force Convergence, Time Steps and Probe Monitoring
 # =============================================================================
-
+plt.close("all")
 move_figure = 1 ;   mode_c = 1
-def code_aster_monitoring(directory,file_name,file_number,open_file,application,file_auto,message_file,probe_position,print_files,mode,Unit):
-    import os
-    import subprocess
-    import numpy as np
-    import matplotlib.pyplot as plt
-    import pandas as pd
-    import re
-    import shutil
+def code_aster_monitoring(directory,file_name,file_number,open_file,application,file_auto,message_file,probe_position,print_files,mode,Unit,Language):
+    
+    if Language == "EN":
+        current_step_name = 'Time of computation:'
+    if Language == "FR":
+        current_step_name = 'Instant de calcul:'
     
     global move_figure
     global mode_c       
@@ -101,7 +106,7 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
         print("It is not recomended to use line search with contact")
     RESIDU_ABSOLU_probe_position = RESIDU_RELATIF_probe_position+1
     
-    keywords_to_include = [ 'X |' , '|                |' , '|ELASTIQUE', '|TANGENTE', '|SECANTE' , 'Time of computation:' ]
+    keywords_to_include = [ 'X |' , '|                |' , '|ELASTIQUE', '|TANGENTE', '|SECANTE' , current_step_name ]
     keywords_to_exclude = [ 'E |              X |' , '| RESI_GLOB_MAXI |' ]
     # keywords_to_exclude = [ '| RESI_GLOB_MAXI |' ]
     filtered_lines = []
@@ -112,11 +117,11 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     df_Lines = pd.DataFrame({'Filtered Lines': filtered_lines})
     # df_Lines.to_csv("Filtered Lines.txt",header=False, index=False)
     
-    indices = df_Lines.index[df_Lines['Filtered Lines'].str.contains('Time of computation:')].tolist()
+    indices = df_Lines.index[df_Lines['Filtered Lines'].str.contains(current_step_name)].tolist()
     indices = np.delete(indices - np.arange(len(indices)) - np.ones(len(indices)), 0).astype(int) 
     # print("indices = ", indices)
     
-    keywords_to_include.remove('Time of computation:')
+    keywords_to_include.remove(current_step_name)
     filtered_lines = []
     with open(message_file, 'r', encoding='utf8') as file:
         for line in file:
@@ -148,7 +153,7 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     end_iter = df_Iterations.iloc[indices]
     # end_iter.to_csv("End Iterations.txt", header=False, index=False)
     
-    keywords_to_include = [ 'Time of computation:']
+    keywords_to_include = [ current_step_name ]
     filtered_lines = []
     with open(message_file, 'r', encoding='utf8') as file:
         for line in file:
@@ -184,7 +189,7 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     iter_converged = end_iter.iloc[steps_converged]
     iter_converged = iter_converged['Filtered Lines'].str.findall(pattern)
     iter_converged = np.array([[float(entry) for entry in sublist] for sublist in iter_converged])
-    # print("iter_converged = ", iter_converged)
+    print("iter_converged = ", iter_converged)
     iter_converged_df= pd.DataFrame(iter_converged)
     # iter_converged_df.to_csv("Iterations Converged.txt", header=False, index=False)
     Iteration_number = np.arange(1,len(Iterations)+1)
@@ -209,8 +214,14 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     fig1.canvas.manager.set_window_title("code_aster Convergence Monitoring - " + load_case )   
     fig1.clear()
     plt.subplot(2, 1, 1)
+    # fnt = "Comic Sans MS"
+    # fnt = "Segoe UI"
     fnt = "Century Gothic"
-    plt.title( "FORCE CONVERGENCE"  , fontsize= 18, loc='center', font=fnt) #, fontweight="bold")
+    # fnt = "Helvetica"
+    # fnt = "Calibri Light"
+    # fnt = "Abadi"
+    # fnt ="Arial"
+    plt.title( "FORCE CONVERGENCE" , fontsize=18, fontdict={"family": fnt} ) #, fontweight="bold")
     line_width = 2.0
 
     if mode == 1:
@@ -282,7 +293,7 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     plt.legend(loc='lower left', shadow= True,  ncol=2, fontsize= 13)
     
     
-    plt.subplot(2, 1, 2) #; print(Times, Iteration_number)
+    plt.subplot(2, 1, 2) ; print(Times, Iteration_number)
     if len(Times) > 1:
         # plt.title(' Time Steps ', fontsize= 18)
         indices_time = np.append(0,indices)
@@ -337,7 +348,7 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     fig2.canvas.manager.set_window_title("code_aster Probe Monitoring")
     fig2.clear()
     plt.subplot(2, 1, 1)
-    plt.title(' PROBE ', fontsize= 18, loc='center', font=fnt)
+    plt.title('PROBE' , fontsize=18, fontdict={"family": fnt} )
     plt.plot( Iteration_number, Iterations[:,probe_position] ,  linestyle='-', linewidth=line_width , color=color_monitoring , label = "Monitoring = " + str(Iterations[-1,probe_position]))
     # plt.plot( Iteration_number, Iterations[:,probe_position] , "h", color="k", markersize=4 )
     # plt.text( Iteration_number[-1], max(Iterations[:,probe_position])*1.1  , "[" + str(Iteration_number[-1]) + " ; " + str(Iterations[-1,probe_position])+"]", color= 'k' , weight="normal", horizontalalignment='right', verticalalignment='bottom', fontsize = 14)
@@ -420,8 +431,8 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
     
     # print(move_figure)
     if move_figure == 1:
-        fig1.canvas.manager.window.move(0, 300)
-        fig2.canvas.manager.window.move(960, 300)
+        fig1.canvas.manager.window.move(300, 500)
+        fig2.canvas.manager.window.move(1300, 500)
     move_figure+=1    
     
     if print_files == 1:
@@ -433,29 +444,29 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
         iter_converged_df.to_csv("./code_aster_Monitoring_Data/Iterations Converged.txt", header=False, index=False)
     
 if __name__ == '__main__':
-    
-    open_file = 0   ;   file_auto = 0   ;   print_files = 1 ; mode = 0
-    
+        
     # directory = r'Y:\tmp'  ;    file_name = 'fort.6'         # search for the file automatically
-    directory = r"C:\Users\trusinja\Desktop\ASTER_WORK\AG_WORK"   ;   file_name = "fort.6"
+    directory = r"C:\Users\trusinja\Desktop\ASTER_WORK\AG_WORK"   
+    file_name = "fort.6"
     file_number = 0        # set to row number that you want, if there is more than one message file found	
     
-    # open_file = 1           # activate - 1 , deactivate - 0
+    open_file = 0           # activate - 1 , deactivate - 0
     # application = "notepad.exe"
     application = r"C:\Users\trusinja\AppData\Local\Programs\Microsoft VS Code\Code.exe"
     
-    file_auto = 0         # enter message path manually, activate - 1 , deactivate - 0
-    message_file = r"C:\Users\trusinja\Desktop\ASTER_WORK\AG_WORK\BUTTERFLY_VALVE_DN3800_PN18_A43767\STUDY\Shaft_Rings\RESULTS\combined.mess"
+    file_auto = 1         # use manually entered message path , activate - 0 , deactivate - 1
+    message_file = r"C:\Users\trusinja\Desktop\ASTER_WORK\AG_WORK\OTHER\BALL_INDENTATION\STUDY\case\temporary\fort.6"
     
     probe_position = -1           # probe probe_position  , 7 for contact and friction , 6 for contact
-    # print_files = 1
+    print_files = 1
     
     Unit = "[-]"
+    Language = "FR"
     
     mode = 1
     
     
-    # code_aster_monitoring(directory,file_name,file_number,open_file,application,file_auto,message_file,probe_position,print_files,mode,Unit)
+    code_aster_monitoring(directory,file_name,file_number,open_file,application,file_auto,message_file,probe_position,print_files,mode,Unit,Language)
     
 
 

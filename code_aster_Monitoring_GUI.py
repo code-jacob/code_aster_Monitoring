@@ -25,10 +25,11 @@ print_files_name = "print_files: "
 mode_name = "mode: "
 
 Unit_name = "Unit: "
+Language_name = "Language: "
 
 user_data = "code_aster_Monitoring_Data/code_aster_Monitoring_User_Data.txt"
 
-def save_user_data(directory, file_name, file_number, application, open_file, file_auto, message_file, probe_position, update_after, print_files, mode, Unit, ):
+def save_user_data(directory, file_name, file_number, application, open_file, file_auto, message_file, probe_position, update_after, print_files, mode, Unit, Language ):
     with open(user_data, "w") as file:
         directory_all = directory_name + (directory)
         file_name_all = file_name_name + (file_name)
@@ -44,6 +45,7 @@ def save_user_data(directory, file_name, file_number, application, open_file, fi
         mode_all = mode_name + str(mode)
         
         Unit_all = Unit_name + str(Unit)
+        Language_all = Language_name + str(Language)
         
         enterances = [directory_all,
                       file_name_all,
@@ -58,7 +60,8 @@ def save_user_data(directory, file_name, file_number, application, open_file, fi
                       print_files_all,
                       mode_all,
                       
-                      Unit_all, ]
+                      Unit_all,
+                      Language_all, ]
         
         names = "\n".join(enterances)
         file.write(names)
@@ -97,14 +100,15 @@ def run_program():
     mode = int(mode_var.get())
     
     Unit = Unit_var.get()
+    Language = Language_var.get()
     
-    names = save_user_data(directory, file_name, file_number, application, open_file, file_auto, message_file, probe_position, update_after, print_files, mode, Unit, )
+    names = save_user_data(directory, file_name, file_number, application, open_file, file_auto, message_file, probe_position, update_after, print_files, mode, Unit, Language )
     # result_label.config(text=names)
     print()
     print(names)
     print()
 
-    code_aster_monitoring(directory,file_name,file_number,open_file,application,file_auto,message_file,probe_position,print_files,mode,Unit)
+    code_aster_monitoring(directory,file_name,file_number,open_file,application,file_auto,message_file,probe_position,print_files,mode,Unit,Language)
     
     open_file_var.set(0)
     
@@ -203,6 +207,14 @@ Unit_var = tk.StringVar(value="[-]")
 Unit_combobox = ttk.Combobox(window, textvariable=Unit_var, width=10, values=[ "[-]", "[mm]", "[rad]", "[N]", "[MPa]", ])
 Unit_combobox.grid(row=row, column=1, sticky="w", padx=pdx, pady=10)
 
+row = row + 1
+Language_label = tk.Label(window, text="Language:", font=(fnt,fnt_size))
+Language_label.grid(row=row, column=0, padx=10, pady=10, sticky="e")
+Language_var = tk.StringVar(value="EN")
+Language_combobox = ttk.Combobox(window, textvariable=Language_var, width=10, values=[ "EN", "FR",  ])
+Language_combobox.grid(row=row, column=1, sticky="w", padx=pdx, pady=10)
+
+
 # Button 
 row = row + 1
 style = ttk.Style()
@@ -280,6 +292,9 @@ for line in lines:
         
     elif line.startswith("Unit: "):
         Unit_var.set(line[len(Unit_name):])
+
+    elif line.startswith("Language: "):
+        Language_var.set(line[len(Language_name):])
 
 window.tk.call("source", "Azure-ttk-theme-main/azure.tcl")
 window.tk.call("set_theme", "dark")
