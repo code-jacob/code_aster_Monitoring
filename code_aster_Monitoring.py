@@ -310,12 +310,12 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
 
         for ii in steps_converged:
             plt.vlines(x= indices[ii]+1, ymin= 0 , ymax= max(Time)*1.2 , color= color_converged, linestyles="--", linewidth= 1)
-            plt.text(indices[ii]+1, max(Time)*1.2, str("%.2f"%Times[ii]), color= color_converged, fontsize = 12)
+            plt.text(indices[ii]+1, max(Time)*1.2, str("%.3g"%Times[ii]), color= color_converged, fontsize = 12)
         for ii in steps_error:
             plt.vlines(x= indices[ii]+1, ymin= 0 , ymax= max(Time)*1.2 , color= color_error, linestyles="--", linewidth= 1)
-            plt.text(indices[ii]+1, max(Time)*1.2, str("%.2f"%Times[ii]), color= color_error, fontsize = 12)
+            plt.text(indices[ii]+1, max(Time)*1.2, str("%.3g"%Times[ii]), color= color_error, fontsize = 12)
         plt.vlines(x= Iteration_number[-1], ymin= 0 , ymax= max(Time)*1.2 , color=color_last_timestep, linestyles="--", linewidth= 1)
-        plt.text(Iteration_number[-1], max(Time)*1.2, str("%.3f"%Times[-1]), color=color_last_timestep, fontsize = 12)
+        plt.text(Iteration_number[-1], max(Time)*1.2, str("%.3g"%Times[-1]), color=color_last_timestep, fontsize = 12)
 
         if mode == 1:
             n_shades = 20
