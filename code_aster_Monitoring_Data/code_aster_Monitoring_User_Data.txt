@@ -1,12 +1,12 @@
 directory: D:\ASTER_WORK
 file_name: fort.6
-file_number: 0
+file_number: 1
 application: C:\Users\trusinja\AppData\Local\Programs\Microsoft VS Code\Code.exe
-message_file: D:\ASTER_WORK\TEST_WORK\spring_3D\STUDY\case\RESULTS\Stage_1_Load.mess
+message_file: D:\ASTER_WORK\TEST_WORK\real_bolt\STUDY\case\RESULTS\Stage_1_Load.mess
 probe_position: -1
 update_after: 300
 open_file: 0
-file_auto: 0
+file_auto: 1
 print_files: 1
 mode: 1
 Unit: [mm]

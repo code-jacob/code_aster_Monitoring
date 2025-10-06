@@ -389,8 +389,8 @@ def code_aster_monitoring(directory,file_name,file_number,open_file,application,
             timesteps_converged.append(Times[-1])
             iter_converged = np.vstack([iter_converged, Iterations[-1]])
             
-        print("Converged Time Steps = ", timesteps_converged)
-        print("Error Time Steps = ", timesteps_error)
+        print("Converged Time Steps = ", np.array(timesteps_converged) )
+        print("Error Time Steps = ", np.array(timesteps_error) )
         print("Number of Time Steps = ", len(Times) )
         print("Number of Converged Time Steps = ", len(timesteps_converged) )
         print("Number of Failed Time Steps = ", len(timesteps_error) )
